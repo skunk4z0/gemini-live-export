@@ -58,9 +58,11 @@ AI エージェント向け開発ルール。作業時は **DESIGN.md と本フ�
 ブランチ例:
 
 ```text
-feature/gemini-bootstrap      # Step0（本作業）
-feature/extension-skeleton    # Step1
-feature/detect-chat           # Step2
+feature/gemini-bootstrap         # Step0
+feature/extension-skeleton       # Step1
+feature/detect-chat              # Step2
+feature/extract-conversation     # Step3
+feature/extract-messages         # Step4（次）
 ```
 
 ---
@@ -69,10 +71,11 @@ feature/detect-chat           # Step2
 
 | Step | 状態 |
 |------|------|
-| Step0 設計・調査枠・タスク | 完成（本ディレクトリ） |
+| Step0 設計・調査枠・タスク | 完成 |
 | Step1 拡張雛形 | 完成 |
 | Step2 ページ判定 | 完成 |
-| Step3〜5 DOM | 実機確認待ち（ブロック） |
+| Step3 Conversation 取得 | 完成（動作確認済み） |
+| Step4〜5 Message / Role | 未着手（ゲート通過済み・着手可） |
 | Step6〜9 | 未着手 |
 
 ---

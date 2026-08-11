@@ -1,6 +1,5 @@
 /**
  * Content script entry.
- * DOM extraction is out of scope until Step3.
  */
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (!message || typeof message.type !== "string") {
@@ -15,6 +14,18 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       ok: isChatPage,
       href,
       chatId: isChatPage ? GeminiDetect.extractGeminiChatId(href) : null,
+    });
+    return true;
+  }
+
+  if (message.type === Messages.GET_CONVERSATION) {
+    const href = location.href;
+    const conversation = GeminiExtractConversation.extractConversation(href);
+    sendResponse({
+      type: Messages.PONG,
+      ok: conversation != null,
+      href,
+      conversation,
     });
     return true;
   }

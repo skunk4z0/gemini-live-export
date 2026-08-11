@@ -23,7 +23,12 @@
   "content_scripts": [
     {
       "matches": ["https://gemini.google.com/*"],
-      "js": ["src/messages.js", "src/detect.js", "src/content.js"],
+      "js": [
+        "src/messages.js",
+        "src/detect.js",
+        "src/extract-conversation.js",
+        "src/content.js"
+      ],
       "run_at": "document_idle"
     }
   ],

@@ -30,23 +30,38 @@ async function getActiveTab() {
 }
 
 /**
+ * @param {number} tabId
+ * @param {string} type
+ */
+function sendContentMessage(tabId, type) {
+  return new Promise((resolve) => {
+    chrome.tabs.sendMessage(tabId, { type }, (response) => {
+      if (chrome.runtime.lastError) {
+        resolve(null);
+        return;
+      }
+      resolve(response ?? null);
+    });
+  });
+}
+
+/**
  * Ask the content script; success means we are on a Gemini chat page.
  * @param {number} tabId
  */
 function pingContentScript(tabId) {
-  return new Promise((resolve) => {
-    chrome.tabs.sendMessage(
-      tabId,
-      { type: Messages.IS_GEMINI_PAGE },
-      (response) => {
-        if (chrome.runtime.lastError) {
-          resolve(null);
-          return;
-        }
-        resolve(response && response.ok ? response : null);
-      }
-    );
-  });
+  return sendContentMessage(tabId, Messages.IS_GEMINI_PAGE).then((response) =>
+    response && response.ok ? response : null
+  );
+}
+
+/**
+ * @param {number} tabId
+ */
+function fetchConversation(tabId) {
+  return sendContentMessage(tabId, Messages.GET_CONVERSATION).then((response) =>
+    response && response.ok && response.conversation ? response.conversation : null
+  );
 }
 
 async function refreshPageState() {
@@ -70,14 +85,21 @@ async function refreshPageState() {
     return;
   }
 
-  setStatus("Gemini chat ready.");
-  // Enabled only to show page detection; click is a no-op until later steps.
+  const conversation = await fetchConversation(tab.id);
+  if (!conversation) {
+    setStatus("Gemini chat detected, but conversation is not loaded yet.");
+    return;
+  }
+
+  const label = conversation.title || conversation.id || "chat";
+  setStatus(`Ready: ${label}`);
+  // Enabled only to show detection + metadata; click is a no-op until later steps.
   setSaveEnabled(true);
 }
 
 saveBtn.addEventListener("click", () => {
-  // Step1: export pipeline not implemented yet.
-  setStatus("Save is not implemented yet (Step1 skeleton).");
+  // Export pipeline (Markdown / download) is Step6+.
+  setStatus("Save is not implemented yet (Step6+).");
 });
 
 refreshPageState().catch((err) => {
