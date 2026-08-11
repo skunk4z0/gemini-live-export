@@ -190,16 +190,16 @@ gemini-live-export/
 
 | Step | 内容 | 状態 | ゲート |
 |------|------|------|--------|
-| Step0 | 設計・DOM 調査枠・タスクパック | **本ブランチ** | — |
-| Step1 | 拡張雛形 | 未着手 → `tasks/A-*` | — |
-| Step2 | ページ判定 `detect.js` | 未着手 → `tasks/B-*` | Step1 後 |
-| Step3 | Conversation 取得（DOM） | ブロック | **実機確認が dom-research に反映されるまで禁止** |
-| Step4 | Message 取得（DOM） | ブロック | 同上 |
-| Step5 | Role 判定 | ブロック | 同上 |
-| Step6 | Markdown 生成 | 未着手 | Step3〜5 後。`tasks/deferred/R01-R02` |
-| Step7 | ダウンロード | 未着手 | Step6 後。`tasks/deferred/R03-R04` |
-| Step8 | 画像・添付 | 将来 | — |
-| Step9 | 仮想スクロール / KaTeX 等 | 将来 | 実機次第。`tasks/deferred/R05-R06` |
+| Step0 | 設計・DOM 調査枠・タスクパック | 完成 | — |
+| Step1 | 拡張雛形 | 完成 | — |
+| Step2 | ページ判定 `detect.js` | 完成 | — |
+| Step3 | Conversation 取得（DOM） | 完成 | — |
+| Step4 | Message 取得（DOM） | 完成 | — |
+| Step5 | Role 判定 | 完成 | — |
+| Step6 | Markdown 生成 | 完成 | — |
+| Step7 | ダウンロード | 完成 | — |
+| Step8 | 画像・添付 | 実装中（User `img.preview-image`） | Assistant 画像・非画像ファイルは実機セレクタ記入まで禁止 |
+| Step9 | 仮想スクロール / KaTeX 等 | 未着手 | 実機次第。`tasks/deferred/R05-R06` |
 
 ---
 

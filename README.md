@@ -4,7 +4,7 @@ Gemini で**現在開いている 1 チャット**を Obsidian 用 Markdown と�
 
 親リポジトリ [chatgpt-live-export](https://github.com/skunk4z0/chatgpt-live-export) 内の**別プロダクト**です。ChatGPT 拡張（リポジトリルート）とはコードを共有しません。
 
-> **状態**: Step0（設計・DOM 調査枠・タスクパック）。拡張の読み込み用 `manifest.json` は Step1 で追加します。
+> **状態**: Step0〜7 完了。Step8（User 画像 → `[Image]`）実装済み・実機確認待ち。
 
 ---
 

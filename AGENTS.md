@@ -37,12 +37,13 @@ AI エージェント向け開発ルール。作業時は **DESIGN.md と本フ�
 
 ### 今やる
 
-- Step1 拡張雛形、Step2 ページ判定
-- Track C: 実機確認用 docs 整備（人間が結果転記）
+- Step8: User 画像プレースホルダー（実機確認）
+- Step9: 仮想スクロール / KaTeX（実機で必要と判明した場合のみ）
+- Assistant 画像・非画像ファイルは追加実機後のみ
 
 ### 禁止（ゲート）
 
-- `docs/dom-research.md` に実機結果が入るまで **Step3〜5 の実装コードを書かない**
+- 画像・添付の **未確認セレクタを実装に書かない**（`[class*="upload"]` 含む）
 - 商用 UI（Quota / Pro / 多言語 / 広告）
 - ChatGPT コードへの Gemini 混入、共通 Provider 抽象
 
@@ -81,8 +82,9 @@ feature/download                 # Step7
 | Step4 Message 取得 | 完成（動作確認済み） |
 | Step5 Role / 空除外 | 完成（動作確認済み） |
 | Step6 Markdown 生成 | 完成（動作確認済み） |
-| Step7 Download | 実装済み（実機確認待ち） |
-| Step8〜9 | 未着手 |
+| Step7 Download | 完成（動作確認済み・`c20915b`） |
+| Step8 画像・添付 | 実装済み（User `preview-image` → `[Image]`・実機確認待ち） |
+| Step9 仮想スクロール / KaTeX | 未着手（実機次第） |
 
 ---
 

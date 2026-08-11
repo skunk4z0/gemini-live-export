@@ -20,6 +20,8 @@
 | スクローラ        | `infinite-scroller`, `.mat-drawer-inner-container`, `main.content-container`, `cdk-virtual-scroll-viewport` | 有効 1（scrollHeight≫clientHeight） |
 | KaTeX        | `.katex`, `span.base`, `.mord` 等                                                                            | この会話では 0。数式会話で再確認任意  |
 | 思考パネル        | `[class*="thinking"]` は **誤検出あり**                                                                           | `thinking-level-enabled`（UI）にヒット。本文除外に使わない |
+| User 画像プレビュー  | `user-query img.preview-image`                                                                              | **Step8 実機確定**（alt: アップロードされた画像のプレビュー） |
+| ページ全体 upload UI | `xap-uploader-dropzone` / `[class*="upload"]`                                                               | **メッセージ添付ではない**（チャット全体ドロップゾーン）。除外 |
 
 
 
@@ -45,12 +47,13 @@
 - [ ] タイトル取得候補（現行失敗・代替未。暫定フォールバック可）
 - [x] URL の chat ID 実パターン（`/u/0/app/{id}`）
 - [x] タイムスタンプらしき DOM（候補セレクタでは 0）
-- [x] 画像・添付（この会話: img 0 / attachment-like 3・詳細は Step8）
+- [x] 画像・添付（User: `img.preview-image` 確定。Assistant 生成画像・非画像ファイルは未確認）
 - [x] 思考パネル（`[class*="thinking"]` は UI 誤検出。本文除外に使わない）
 - [ ] 長い会話での `scrollHeight` 変化（仮想スクロール実験・Step9）
 - [x] KaTeX（この会話では 0）
 
-**ゲート**: Step3〜5 コア（Message/Role）は通過。タイトル代替・仮想スクロールは TODO のまま実装可（タイトルは chat ID フォールバック）。
+**ゲート**: Step3〜5 コア（Message/Role）は通過。タイトル代替・仮想スクロールは TODO のまま実装可（タイトルは chat ID フォールバック）。  
+**Step8 ゲート**: User 画像プレビューは通過（`img.preview-image`）。Assistant 画像・非画像ファイルは未確認のためプレースホルダー実装しない。
 
 ---
 
@@ -96,10 +99,31 @@
 
 ### 画像・添付
 
-- サンプル有無: 画像なし / attachment-like ヒットあり
-- 見つかった DOM（img / attachment 等）: `images in turns: 0` / `attachment-like: 3`
-- メモ: 詳細クラス未記録。Step8 で再調査
+- サンプル有無: **あり**（User 画像アップロード 1 件 / 2026-08-11）
+- 見つかった DOM: `user-query img.preview-image`（http, 512×221）
+- メモ: `pageAttachish` の `[class*="upload"]` は `xap-uploader-dropzone`（チャット全体）に誤ヒット → **添付セレクタに使わない**
 
+#### Step8 実機記入欄（**画像 or ファイルを送った会話**で再実行）
+
+テキストのみの会話ではスニペット 11 は `mediaTurns: 0` で終わり、詳細行は出ない（正常）。  
+先に Gemini へ画像アップロード or ファイル添付したチャットを開き、そのタブの Console で実行する。
+
+- 日付 / URL pathname: 2026-08-11 / `/u/0/app/19470dc984cc0602`
+- User 添付（ファイル）のタグ名・主要 class / data-*: **画像のみ確認** → `img.preview-image`（alt=`アップロードされた画像のプレビュー`）。非画像ファイルは未確認
+- Assistant 生成画像のタグ名・主要 class / data-*: **未確認**（このサンプルでは turn 内なし）
+- avatar / profile と本文画像の区別方法: ターン内は `preview-image` のみ採用。ページ全体の他 `img`（7）は UI/avatar 候補のため無視
+- `src` の典型（https / data / blob）: **http**（このサンプル）
+- Console 生ログ（下記スニペット結果を貼付）:
+
+```
+[Step8] START
+[Step8] summary {pathname: '/u/0/app/19470dc984cc0602', containers: 2, turns: 4, pageImgs: 7, pageAttachish: 1}
+[Step8] pageAttachish[0] DIV xap-uploader-dropzone chat-container ...
+[Step8] --- turn[2] user-query imgs=1 attachish=0 ---
+[Step8] img[0] {className: 'preview-image', alt: 'アップロードされた画像のプレビュー', w: 512, h: 221, srcKind: 'http', …}
+[Step8] mediaTurns: 1
+[Step8] END
+```
 ### 仮想スクロール
 
 - scrollHeight は変化したか: **未実験**（1 スナップショットのみ）
@@ -270,7 +294,7 @@ console.log('time-like elements:', timeCandidates.length);
   console.log(`time[${i}]:`, el.tagName, el.getAttribute('datetime') || el.getAttribute('data-timestamp') || el.getAttribute('aria-label') || el.className);
 });
 
-// 10. 画像・添付
+// 10. 画像・添付（初回）
 const imgs = document.querySelectorAll('user-query img, model-response img, .conversation-container img');
 const attachments = document.querySelectorAll(
   '[class*="attachment"], [class*="upload"], [data-test-id*="attachment"], [data-testid*="attachment"]'
@@ -280,5 +304,66 @@ console.log('attachment-like:', attachments.length);
 [...imgs].slice(0, 3).forEach((img, i) => {
   console.log(`img[${i}]:`, img.src?.substring(0, 80), 'alt=', img.alt);
 });
+
+// 11. Step8 詳細（画像・ファイル付き会話で実行）
+// 期待: 最低でも [Step8] START / summary / END が必ず出る。
+// mediaTurns: 0 → この会話にターン内メディアなし（別チャットで再実行）。
+(function () {
+  console.log('[Step8] START');
+  const containers = document.querySelectorAll('.conversation-container');
+  const turns = [...document.querySelectorAll('user-query, model-response')];
+  const pageImgs = [...document.querySelectorAll('img')];
+  const pageAttachish = [...document.querySelectorAll(
+    '[class*="attachment"], [class*="upload"], [data-test-id*="attachment"], [data-testid*="attachment"], a[download]'
+  )];
+  console.log('[Step8] summary', {
+    pathname: location.pathname,
+    containers: containers.length,
+    turns: turns.length,
+    pageImgs: pageImgs.length,
+    pageAttachish: pageAttachish.length
+  });
+
+  pageAttachish.slice(0, 10).forEach((el, i) => {
+    console.log(`[Step8] pageAttachish[${i}]`, el.tagName, String(el.className).slice(0, 120),
+      el.getAttribute('data-test-id') || el.getAttribute('data-testid') || '',
+      (el.textContent || '').trim().slice(0, 60));
+  });
+
+  let mediaTurns = 0;
+  turns.forEach((turn, ti) => {
+    const role = turn.tagName.toLowerCase();
+    const imgs = [...turn.querySelectorAll('img')];
+    const attachish = [...turn.querySelectorAll(
+      '[class*="attachment"], [class*="upload"], [data-test-id*="attachment"], [data-testid*="attachment"], a[download]'
+    )];
+    if (!imgs.length && !attachish.length) return;
+    mediaTurns += 1;
+    console.log(`[Step8] --- turn[${ti}] ${role} imgs=${imgs.length} attachish=${attachish.length} ---`);
+    imgs.forEach((img, i) => {
+      const src = img.currentSrc || img.src || '';
+      console.log(`[Step8] img[${i}]`, {
+        className: String(img.className).slice(0, 120),
+        alt: img.alt,
+        w: img.naturalWidth || img.width,
+        h: img.naturalHeight || img.height,
+        srcKind: src.startsWith('data:') ? 'data' : src.startsWith('blob:') ? 'blob' : src.startsWith('http') ? 'http' : 'other',
+        srcHead: src.slice(0, 100),
+        parent: img.parentElement && `${img.parentElement.tagName}.${String(img.parentElement.className).slice(0, 80)}`
+      });
+    });
+    attachish.slice(0, 8).forEach((el, i) => {
+      console.log(`[Step8] attachish[${i}]`, el.tagName, String(el.className).slice(0, 100),
+        el.getAttribute('data-test-id') || el.getAttribute('data-testid') || '',
+        (el.textContent || '').trim().slice(0, 60));
+    });
+  });
+
+  console.log('[Step8] mediaTurns:', mediaTurns);
+  if (mediaTurns === 0) {
+    console.warn('[Step8] ターン内に画像/添付なし。Gemini に画像かファイルを送った会話を開いて再実行してください。');
+  }
+  console.log('[Step8] END');
+})();
 ```
 
