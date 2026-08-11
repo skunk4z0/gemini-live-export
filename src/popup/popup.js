@@ -1,6 +1,6 @@
 /**
- * Popup UI (skeleton).
- * Enables Save only when the active tab is a Gemini page (content script responds).
+ * Popup UI.
+ * Enables Save only on a Gemini chat URL when the content script responds.
  * Save action itself is deferred to later steps.
  */
 
@@ -30,23 +30,7 @@ async function getActiveTab() {
 }
 
 /**
- * True when URL is under gemini.google.com (hostname check only).
- * @param {string | undefined} url
- */
-function isGeminiUrl(url) {
-  if (!url) {
-    return false;
-  }
-  try {
-    const { hostname } = new URL(url);
-    return hostname === "gemini.google.com";
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Ask the content script; success means we are on an injected Gemini page.
+ * Ask the content script; success means we are on a Gemini chat page.
  * @param {number} tabId
  */
 function pingContentScript(tabId) {
@@ -75,18 +59,18 @@ async function refreshPageState() {
     return;
   }
 
-  if (!isGeminiUrl(tab.url)) {
-    setStatus("Open a Gemini page to export.");
+  if (!GeminiDetect.isGeminiChatUrl(tab.url)) {
+    setStatus("Open a Gemini chat to export.");
     return;
   }
 
   const response = await pingContentScript(tab.id);
   if (!response) {
-    setStatus("Gemini page detected, but content script is not ready. Reload the tab.");
+    setStatus("Gemini chat detected, but content script is not ready. Reload the tab.");
     return;
   }
 
-  setStatus("Gemini page ready.");
+  setStatus("Gemini chat ready.");
   // Enabled only to show page detection; click is a no-op until later steps.
   setSaveEnabled(true);
 }
