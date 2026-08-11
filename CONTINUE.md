@@ -8,9 +8,9 @@
 |------|-----|
 | **正式リポジトリ** | https://github.com/skunk4z0/gemini-live-export |
 | 作業クローン推奨 | `c:\Dev\Scripts\AI\gemini-live-export` |
-| 現在ブランチ | `feature/images-attachments`（Step8） |
+| 現在ブランチ | `feature/images-attachments`（Step8 完了） |
 | 前ブランチ | `feature/download`（Step7 完了・`c20915b`） |
-| **推奨モデル（Step8）** | **Composer 2.5**（extract-messages 中心） |
+| Step8 コミット | `5e0866e` |
 
 ```powershell
 cd c:\Dev\Scripts\AI\gemini-live-export
@@ -20,8 +20,7 @@ git checkout feature/images-attachments
 
 ## 今の状態
 
-- Step0〜7 完了
-- Step8 **実装済み（実機確認待ち）**: User `img.preview-image` → `[Image]`
+- Step0〜8 完了（Step8 実機確認 OK: Save → User 節に `[Image]`）
 - Assistant 生成画像・非画像ファイルは **未確認のため未実装**
 - `[class*="upload"]` / `xap-uploader-dropzone` はチャット全体 UI → **使わない**
 - content scripts は **同一グローバル** — モジュール間で `const` 名を重複させない
@@ -35,10 +34,9 @@ git checkout feature/images-attachments
 
 ## 次にやること
 
-1. **実機確認**: 拡張リロード → 画像付き会話タブ再読込 → Save → `.md` に `[Image]` があること
-2. 動作確認後コミット（依頼時）
-3. Assistant 画像 / PDF 等の追加調査があれば docs 追記 → セレクタ確定後に拡張
-4. Step9（仮想スクロール・KaTeX）は実機で必要と判明してから
+1. Step8 ブランチの PR / merge（依頼時）
+2. Assistant 画像 / PDF 等の追加調査があれば docs 追記 → セレクタ確定後に拡張
+3. Step9（仮想スクロール・KaTeX）は実機で必要と判明してから（チェックリスト未実施）
 
 ## 確定セレクタ（実装に使ってよい）
 
@@ -52,9 +50,8 @@ git checkout feature/images-attachments
 | User 画像 | `user-query img.preview-image` → `[Image]` |
 | 禁止 | `[class*="thinking"]` 本文除外 / `[class*="upload"]` を添付扱い |
 
-## 新チャットへの貼り付け例（Step8 実機確認後）
+## 新チャットへの貼り付け例
 
 ```text
-CONTINUE.md を読んで、Step8 の実機確認結果を前提に
-次 Step（またはコミット）を進めてください。
+CONTINUE.md を読んで、Step8 完了前提で次（PR または Step9 実機調査）を進めてください。
 ```

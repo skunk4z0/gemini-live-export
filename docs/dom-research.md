@@ -53,7 +53,7 @@
 - [x] KaTeX（この会話では 0）
 
 **ゲート**: Step3〜5 コア（Message/Role）は通過。タイトル代替・仮想スクロールは TODO のまま実装可（タイトルは chat ID フォールバック）。  
-**Step8 ゲート**: User 画像プレビューは通過（`img.preview-image`）。Assistant 画像・非画像ファイルは未確認のためプレースホルダー実装しない。
+**Step8 ゲート**: User 画像プレビューは通過（`img.preview-image`）。Save → User 節 `[Image]` 実機確認 OK（2026-08-11）。Assistant 画像・非画像ファイルは未確認のためプレースホルダー実装しない。
 
 ---
 

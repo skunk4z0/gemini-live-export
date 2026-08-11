@@ -37,7 +37,7 @@ AI エージェント向け開発ルール。作業時は **DESIGN.md と本フ�
 
 ### 今やる
 
-- Step8: User 画像プレースホルダー（実機確認）
+- Step8: 完了（User `preview-image` → `[Image]`・実機確認 OK）
 - Step9: 仮想スクロール / KaTeX（実機で必要と判明した場合のみ）
 - Assistant 画像・非画像ファイルは追加実機後のみ
 
@@ -83,7 +83,7 @@ feature/download                 # Step7
 | Step5 Role / 空除外 | 完成（動作確認済み） |
 | Step6 Markdown 生成 | 完成（動作確認済み） |
 | Step7 Download | 完成（動作確認済み・`c20915b`） |
-| Step8 画像・添付 | 実装済み（User `preview-image` → `[Image]`・実機確認待ち） |
+| Step8 画像・添付 | 完成（User `preview-image` → `[Image]`・実機確認 OK・`5e0866e`） |
 | Step9 仮想スクロール / KaTeX | 未着手（実機次第） |
 
 ---

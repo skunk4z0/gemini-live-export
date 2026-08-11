@@ -198,7 +198,7 @@ gemini-live-export/
 | Step5 | Role 判定 | 完成 | — |
 | Step6 | Markdown 生成 | 完成 | — |
 | Step7 | ダウンロード | 完成 | — |
-| Step8 | 画像・添付 | 実装中（User `img.preview-image`） | Assistant 画像・非画像ファイルは実機セレクタ記入まで禁止 |
+| Step8 | 画像・添付 | 完成（User `img.preview-image` → `[Image]`） | Assistant 画像・非画像ファイルは実機セレクタ記入まで禁止 |
 | Step9 | 仮想スクロール / KaTeX 等 | 未着手 | 実機次第。`tasks/deferred/R05-R06` |
 
 ---
