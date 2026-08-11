@@ -1,7 +1,7 @@
 /**
  * Popup UI.
  * Enables Save on a Gemini chat when conversation, messages, and Markdown are ready.
- * Download is Step7 — Save click only confirms Markdown generation.
+ * Save downloads Markdown via the service worker (Step7).
  */
 
 const statusEl = document.getElementById("status");
@@ -36,6 +36,22 @@ async function getActiveTab() {
 function sendContentMessage(tabId, type) {
   return new Promise((resolve) => {
     chrome.tabs.sendMessage(tabId, { type }, (response) => {
+      if (chrome.runtime.lastError) {
+        resolve(null);
+        return;
+      }
+      resolve(response ?? null);
+    });
+  });
+}
+
+/**
+ * @param {{ type: string, content: string, title?: string }} payload
+ * @returns {Promise<{ ok: boolean, filename?: string, downloadId?: number, error?: string } | null>}
+ */
+function sendBackgroundMessage(payload) {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage(payload, (response) => {
       if (chrome.runtime.lastError) {
         resolve(null);
         return;
@@ -86,7 +102,7 @@ function fetchMessages(tabId) {
 
 /**
  * @param {number} tabId
- * @returns {Promise<{ markdown: string } | { error: string }>}
+ * @returns {Promise<{ markdown: string, conversation?: object | null } | { error: string }>}
  */
 function fetchMarkdown(tabId) {
   return sendContentMessage(tabId, Messages.GET_MARKDOWN).then((response) => {
@@ -99,7 +115,10 @@ function fetchMarkdown(tabId) {
     if (typeof response.markdown !== "string") {
       return { error: "invalid_response" };
     }
-    return { markdown: response.markdown };
+    return {
+      markdown: response.markdown,
+      conversation: response.conversation ?? null,
+    };
   });
 }
 
@@ -165,13 +184,12 @@ async function refreshPageState() {
   const label = conversation.title || conversation.id || "chat";
   const kb = (markdown.length / 1024).toFixed(1);
   setStatus(`Ready: ${label} (${messages.length} messages, ${kb} KB Markdown)`);
-  // Enabled to show pipeline readiness; download is Step7.
   setSaveEnabled(true);
 }
 
 saveBtn.addEventListener("click", async () => {
   setSaveEnabled(false);
-  setStatus("Checking Markdown…");
+  setStatus("Preparing download…");
 
   const tab = await getActiveTab();
   if (!tab || tab.id == null) {
@@ -193,8 +211,33 @@ saveBtn.addEventListener("click", async () => {
     return;
   }
 
-  const kb = (markdown.length / 1024).toFixed(1);
-  setStatus(`Markdown ready (${kb} KB). Download is Step7.`);
+  const conversation = markdownResult.conversation;
+  const title =
+    conversation && typeof conversation.title === "string"
+      ? conversation.title
+      : undefined;
+
+  setStatus("Opening save dialog…");
+  const downloadResult = await sendBackgroundMessage({
+    type: Messages.DOWNLOAD_FILE,
+    content: markdown,
+    title,
+  });
+
+  if (!downloadResult) {
+    setStatus("Download failed: no response from background.");
+    setSaveEnabled(true);
+    return;
+  }
+
+  if (!downloadResult.ok) {
+    setStatus(`Download failed: ${downloadResult.error || "unknown error"}`);
+    setSaveEnabled(true);
+    return;
+  }
+
+  const name = downloadResult.filename || "file";
+  setStatus(`Saved: ${name}`);
   setSaveEnabled(true);
 });
 

@@ -62,7 +62,10 @@ feature/gemini-bootstrap         # Step0
 feature/extension-skeleton       # Step1
 feature/detect-chat              # Step2
 feature/extract-conversation     # Step3
-feature/extract-messages         # Step4（次）
+feature/extract-messages         # Step4
+feature/filter-messages          # Step5
+feature/markdown                 # Step6
+feature/download                 # Step7
 ```
 
 ---
@@ -77,7 +80,9 @@ feature/extract-messages         # Step4（次）
 | Step3 Conversation 取得 | 完成（動作確認済み） |
 | Step4 Message 取得 | 完成（動作確認済み） |
 | Step5 Role / 空除外 | 完成（動作確認済み） |
-| Step6〜9 | 未着手 |
+| Step6 Markdown 生成 | 完成（動作確認済み） |
+| Step7 Download | 実装済み（実機確認待ち） |
+| Step8〜9 | 未着手 |
 
 ---
 
