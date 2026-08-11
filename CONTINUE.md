@@ -6,38 +6,41 @@
 
 | 項目 | 値 |
 |------|-----|
-| リポジトリ | `chatgpt-live-export`（モノレポ） |
-| Gemini ルート | `gemini-live-export/` |
-| 推奨開始ブランチ | `feature/gemini-bootstrap`（push 済み） |
-| Step1 作業ブランチ | ここから `feature/extension-skeleton` を切る |
+| **正式リポジトリ** | https://github.com/skunk4z0/gemini-live-export （独立 repo・`main` に Step0+Step1 済み） |
+| 作業クローン | `c:\Dev\Scripts\AI\gemini-live-export` |
+| 次の作業ブランチ | `feature/detect-chat`（`main` から作成） |
 
 ```powershell
-cd c:\Dev\Scripts\AI\chatgpt-live-export
+cd c:\Dev\Scripts\AI\gemini-live-export
 git fetch
-git checkout feature/gemini-bootstrap
+git checkout main
 git pull
-git checkout -b feature/extension-skeleton
+git checkout -b feature/detect-chat
 ```
 
 ## 今の状態
 
 - Step0 完了（DESIGN / AGENTS / README / dom-research / tasks）
-- Step1・2 未実装
+- **Step1 完了**（manifest / popup / background / content / messages / 仮 icons）
+  - コミット: `Add extension skeleton`
+  - 独立 repo `main` に push 済み
+- Step2 未実装
 - Step3〜5 は実機確認ゲートでブロック
 
 ## 次にやること（順番）
 
-1. **Track A Step1** — モデル: **Grok 4.5**  
-   プロンプト: `gemini-live-export/tasks/PROMPTS.md` の Track A
+1. ~~Track A Step1~~ ✅ 完了
 2. **Track B Step2** — モデル: **Composer 2.5**  
-   プロンプト: 同ファイル Track B
+   プロンプト: `tasks/PROMPTS.md` の Track B
 3. **Track C** — docs 整備（Composer 2.5）→ **人間が実機確認**
 4. ゲート通過後のみ Step3〜
 
-## 新チャットへの貼り付け例
+## 新チャットへの貼り付け例（Track B）
 
 ```text
-gemini-live-export/CONTINUE.md と gemini-live-export/tasks/PROMPTS.md の Track A に従って、
-Step1 拡張雛形を実装してください。読むファイルは PROMPTS / TASK に列挙されたものだけにしてください。
-作業ブランチは feature/extension-skeleton（なければ gemini-bootstrap から作成）です。
+CONTINUE.md と tasks/PROMPTS.md の Track B に従って、
+Step2 ページ判定（detect.js）を実装してください。
+読むファイルは PROMPTS / TASK に列挙されたものだけにしてください。
+作業ブランチは feature/detect-chat（なければ main から作成）です。
+リポジトリは https://github.com/skunk4z0/gemini-live-export を正とします。
 ```
