@@ -30,5 +30,29 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === Messages.GET_MESSAGES) {
+    const href = location.href;
+    const onChatPage = GeminiDetect.isGeminiChatUrl(href);
+    try {
+      const messages = onChatPage ? GeminiExtractMessages.extractMessages() : [];
+      sendResponse({
+        type: Messages.PONG,
+        ok: onChatPage,
+        href,
+        messages,
+        count: messages.length,
+      });
+    } catch (err) {
+      sendResponse({
+        type: Messages.PONG,
+        ok: false,
+        href,
+        messages: [],
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+    return true;
+  }
+
   return;
 });

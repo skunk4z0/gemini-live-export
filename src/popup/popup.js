@@ -64,6 +64,26 @@ function fetchConversation(tabId) {
   );
 }
 
+/**
+ * @param {number} tabId
+ * @returns {Promise<{ messages: object[] } | { error: string }>}
+ */
+function fetchMessages(tabId) {
+  return sendContentMessage(tabId, Messages.GET_MESSAGES).then((response) => {
+    if (!response) {
+      // Usually: extension reloaded but this tab still has the old content script.
+      return { error: "no_response" };
+    }
+    if (response.error) {
+      return { error: String(response.error) };
+    }
+    if (!Array.isArray(response.messages)) {
+      return { error: "invalid_response" };
+    }
+    return { messages: response.messages };
+  });
+}
+
 async function refreshPageState() {
   setSaveEnabled(false);
   setStatus("Checking page…");
@@ -91,8 +111,24 @@ async function refreshPageState() {
     return;
   }
 
+  const messagesResult = await fetchMessages(tab.id);
+  if ("error" in messagesResult) {
+    if (messagesResult.error === "no_response") {
+      setStatus("Messages API missing. Reload the Gemini tab after updating the extension.");
+      return;
+    }
+    setStatus(`Message extract failed: ${messagesResult.error}`);
+    return;
+  }
+
+  const messages = messagesResult.messages;
+  if (messages.length === 0) {
+    setStatus("Gemini chat detected, but messages are not loaded yet.");
+    return;
+  }
+
   const label = conversation.title || conversation.id || "chat";
-  setStatus(`Ready: ${label}`);
+  setStatus(`Ready: ${label} (${messages.length} messages)`);
   // Enabled only to show detection + metadata; click is a no-op until later steps.
   setSaveEnabled(true);
 }

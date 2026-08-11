@@ -27,6 +27,7 @@
         "src/messages.js",
         "src/detect.js",
         "src/extract-conversation.js",
+        "src/extract-messages.js",
         "src/content.js"
       ],
       "run_at": "document_idle"
