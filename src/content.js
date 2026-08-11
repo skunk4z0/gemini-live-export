@@ -34,7 +34,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     const href = location.href;
     const onChatPage = GeminiDetect.isGeminiChatUrl(href);
     try {
-      const messages = onChatPage ? GeminiExtractMessages.extractMessages() : [];
+      const raw = onChatPage ? GeminiExtractMessages.extractMessages() : [];
+      const messages = GeminiFilterMessages.filterMessages(raw);
       sendResponse({
         type: Messages.PONG,
         ok: onChatPage,
