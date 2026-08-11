@@ -8,8 +8,8 @@
 |------|-----|
 | **正式リポジトリ** | https://github.com/skunk4z0/gemini-live-export |
 | 作業クローン推奨 | `c:\Dev\Scripts\AI\gemini-live-export` |
-| 現在ブランチ | `feature/filter-messages`（Step5 実装済み・**実機確認待ち**） |
-| 次ブランチ | Step6 着手時に `feature/markdown` 等（`feature/filter-messages` から分岐想定） |
+| 現在ブランチ | `feature/filter-messages`（Step5 完了・動作確認済み・コミット済み） |
+| 次ブランチ | `feature/markdown`（Step6・`feature/filter-messages` から分岐） |
 | **推奨モデル（Step6）** | **Grok 4.5**（`markdown.js` + content/popup 配線） |
 
 ```powershell
@@ -17,23 +17,24 @@ cd c:\Dev\Scripts\AI\gemini-live-export
 git fetch
 git checkout feature/filter-messages
 git pull
-# 実機確認後に commit。Step6 は deferred を読んでから新ブランチ
+git checkout -b feature/markdown
 ```
 
 ## 今の状態
 
-- Step0〜4 完了（`extract-messages.js` コミット済み）
-- Step5 実装済み: `filter-messages.js`（Role 許可 + 空除外、DOM なし）→ `content.js` の `GET_MESSAGES` で `extract` → `filter`
-- **Step5 実機確認待ち**（拡張更新後は Gemini タブのリロード必須）
+- Step0〜5 完了（`filter-messages.js` コミット済み: `781f217`）
+- Step5 手動確認済み: Popup `Ready: Chrome拡張のコード解析と課金対策 - Google Gemini (14 messages)`（2026-08-11）
 - content scripts は **同一グローバル** — モジュール間で `const` 名を重複させない
+- 拡張更新後は **Gemini タブのリロード必須**（古い content script が残る）
 - Console で API を叩くときは **content script コンテキスト**を選ぶ
 - **Track C 実機確認完了・Step3〜5 コア ゲート通過**
 - docs: `docs/dom-research.md` に実機結果・確定セレクタあり
+- `tasks/deferred/` は Step6 から開いてよい
 
 ## 次にやること
 
-1. **Step5 実機確認**: Popup `Ready: … (N messages)`（空除外後の件数）。必要なら content script で `GeminiFilterMessages.filterMessages(...)` を確認
-2. Step6〜 Markdown / Download（`tasks/deferred/` を初めて開いてよい）
+1. **Step6** Markdown 生成 — `markdown.js`（文字列生成のみ。DOM / Download 禁止）
+2. Step7 Download（`tasks/deferred/R03-R04`）
 3. `[class*="thinking"]` は本文除外に使わない（UI 誤検出）
 
 ## 確定セレクタ（実装に使ってよい）

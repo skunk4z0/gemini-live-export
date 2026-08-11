@@ -29,6 +29,7 @@
         "src/extract-conversation.js",
         "src/extract-messages.js",
         "src/filter-messages.js",
+        "src/markdown.js",
         "src/content.js"
       ],
       "run_at": "document_idle"

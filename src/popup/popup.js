@@ -1,7 +1,7 @@
 /**
  * Popup UI.
- * Enables Save only on a Gemini chat URL when the content script responds.
- * Save action itself is deferred to later steps.
+ * Enables Save on a Gemini chat when conversation, messages, and Markdown are ready.
+ * Download is Step7 — Save click only confirms Markdown generation.
  */
 
 const statusEl = document.getElementById("status");
@@ -84,6 +84,25 @@ function fetchMessages(tabId) {
   });
 }
 
+/**
+ * @param {number} tabId
+ * @returns {Promise<{ markdown: string } | { error: string }>}
+ */
+function fetchMarkdown(tabId) {
+  return sendContentMessage(tabId, Messages.GET_MARKDOWN).then((response) => {
+    if (!response) {
+      return { error: "no_response" };
+    }
+    if (response.error) {
+      return { error: String(response.error) };
+    }
+    if (typeof response.markdown !== "string") {
+      return { error: "invalid_response" };
+    }
+    return { markdown: response.markdown };
+  });
+}
+
 async function refreshPageState() {
   setSaveEnabled(false);
   setStatus("Checking page…");
@@ -127,15 +146,56 @@ async function refreshPageState() {
     return;
   }
 
+  const markdownResult = await fetchMarkdown(tab.id);
+  if ("error" in markdownResult) {
+    if (markdownResult.error === "no_response") {
+      setStatus("Markdown API missing. Reload the Gemini tab after updating the extension.");
+      return;
+    }
+    setStatus(`Markdown generation failed: ${markdownResult.error}`);
+    return;
+  }
+
+  const markdown = markdownResult.markdown;
+  if (!markdown.trim()) {
+    setStatus("Gemini chat detected, but Markdown is empty.");
+    return;
+  }
+
   const label = conversation.title || conversation.id || "chat";
-  setStatus(`Ready: ${label} (${messages.length} messages)`);
-  // Enabled only to show detection + metadata; click is a no-op until later steps.
+  const kb = (markdown.length / 1024).toFixed(1);
+  setStatus(`Ready: ${label} (${messages.length} messages, ${kb} KB Markdown)`);
+  // Enabled to show pipeline readiness; download is Step7.
   setSaveEnabled(true);
 }
 
-saveBtn.addEventListener("click", () => {
-  // Export pipeline (Markdown / download) is Step6+.
-  setStatus("Save is not implemented yet (Step6+).");
+saveBtn.addEventListener("click", async () => {
+  setSaveEnabled(false);
+  setStatus("Checking Markdown…");
+
+  const tab = await getActiveTab();
+  if (!tab || tab.id == null) {
+    setStatus("No active tab.");
+    return;
+  }
+
+  const markdownResult = await fetchMarkdown(tab.id);
+  if ("error" in markdownResult) {
+    setStatus(`Markdown generation failed: ${markdownResult.error}`);
+    setSaveEnabled(true);
+    return;
+  }
+
+  const markdown = markdownResult.markdown;
+  if (!markdown.trim()) {
+    setStatus("Markdown is empty.");
+    setSaveEnabled(true);
+    return;
+  }
+
+  const kb = (markdown.length / 1024).toFixed(1);
+  setStatus(`Markdown ready (${kb} KB). Download is Step7.`);
+  setSaveEnabled(true);
 });
 
 refreshPageState().catch((err) => {

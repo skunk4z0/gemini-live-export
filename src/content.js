@@ -55,5 +55,39 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === Messages.GET_MARKDOWN) {
+    const href = location.href;
+    const onChatPage = GeminiDetect.isGeminiChatUrl(href);
+    try {
+      const conversation = onChatPage
+        ? GeminiExtractConversation.extractConversation(href)
+        : null;
+      const raw = onChatPage ? GeminiExtractMessages.extractMessages() : [];
+      const messages = GeminiFilterMessages.filterMessages(raw);
+      const markdown =
+        conversation && messages.length > 0
+          ? GeminiMarkdown.generateMarkdown(conversation, messages)
+          : "";
+      sendResponse({
+        type: Messages.PONG,
+        ok: onChatPage && conversation != null && messages.length > 0 && markdown.length > 0,
+        href,
+        conversation,
+        messages,
+        markdown,
+        count: messages.length,
+      });
+    } catch (err) {
+      sendResponse({
+        type: Messages.PONG,
+        ok: false,
+        href,
+        markdown: "",
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+    return true;
+  }
+
   return;
 });

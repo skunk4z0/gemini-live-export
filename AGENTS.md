@@ -75,7 +75,8 @@ feature/extract-messages         # Step4（次）
 | Step1 拡張雛形 | 完成 |
 | Step2 ページ判定 | 完成 |
 | Step3 Conversation 取得 | 完成（動作確認済み） |
-| Step4〜5 Message / Role | 未着手（ゲート通過済み・着手可） |
+| Step4 Message 取得 | 完成（動作確認済み） |
+| Step5 Role / 空除外 | 完成（動作確認済み） |
 | Step6〜9 | 未着手 |
 
 ---
