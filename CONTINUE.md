@@ -1,16 +1,16 @@
 # 新チャット再開用（CONTINUE）
 
-このファイルを新チャットの最初のコンテキストにする。
+> **統合先**: [chatgpt-live-export](https://github.com/skunk4z0/chatgpt-live-export) ブランチ `feature/ai-chat-exporter`（製品名 **AI Chat Exporter**）。本リポでの新規実装は行わない。
 
-## リポジトリ / ブランチ
+## リポジトリ / ブランチ（アーカイブ）
 
 | 項目 | 値 |
 |------|-----|
-| **正式リポジトリ** | https://github.com/skunk4z0/gemini-live-export |
-| 作業クローン推奨 | `c:\Dev\Scripts\AI\gemini-live-export` |
-| 現在ブランチ | `feature/images-attachments`（Step8 完了） |
-| 前ブランチ | `feature/download`（Step7 完了・`c20915b`） |
-| Step8 コミット | `5e0866e` |
+| **正式リポジトリ** | https://github.com/skunk4z0/gemini-live-export（アーカイブ） |
+| **統合先** | https://github.com/skunk4z0/chatgpt-live-export |
+| 作業クローン推奨 | `c:\Dev\Scripts\AI\chatgpt-live-export` |
+| 現在ブランチ（旧） | `feature/images-attachments`（Step8 完了） |
+| Step8 コミット | `5e0866e` / 状態更新 `fb378e7` |
 
 ```powershell
 cd c:\Dev\Scripts\AI\gemini-live-export

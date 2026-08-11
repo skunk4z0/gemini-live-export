@@ -1,10 +1,10 @@
-# gemini-live-export
+# gemini-live-export（アーカイブ）
 
-Gemini で**現在開いている 1 チャット**を Obsidian 用 Markdown として保存する Chrome 拡張（Manifest V3）です。
+> **統合済み**: 新規開発・利用は [chatgpt-live-export](https://github.com/skunk4z0/chatgpt-live-export) の **AI Chat Exporter**（ChatGPT + Gemini 一体拡張）へ移行してください。本リポジトリは参照用アーカイブです。
 
-親リポジトリ [chatgpt-live-export](https://github.com/skunk4z0/chatgpt-live-export) 内の**別プロダクト**です。ChatGPT 拡張（リポジトリルート）とはコードを共有しません。
+Gemini で**現在開いている 1 チャット**を Obsidian 用 Markdown として保存する Chrome 拡張（Manifest V3）でした。
 
-> **状態**: Step0〜8 完了。Step9（仮想スクロール / KaTeX）は実機次第。
+> **状態（凍結）**: Step0〜8 完了時点で AI Chat Exporter に統合。
 
 ---
 
