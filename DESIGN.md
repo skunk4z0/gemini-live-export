@@ -92,30 +92,27 @@ YYYY-MM-DD タイトル.md
 - 保存は毎回 `saveAs: true`（ユーザーが保存先を選択）
 - UTF-8（BOM なし）/ LF
 
-### Frontmatter（Phase1 からの差分）
+### Frontmatter（Obsidian_Vault 新運用ルール準拠・2026-09-11更新）
 
 ```yaml
 ---
-title: "..."
-type: ログ
-subtype: AI生ログ
-category: ""
-summary: ""
-status: 下書き
-source: Gemini
-conversation_id: "..."
+type: log
 created: "YYYY-MM-DD HH:MM"
 updated: "YYYY-MM-DD HH:MM"
+source: Gemini
 tags:
   - gemini
 ---
 ```
 
-| フィールド | Phase1 (ChatGPT) | Gemini |
-|-----------|------------------|--------|
-| source | `ChatGPT` | **`Gemini`** |
-| tags | `- chatgpt` | **`- gemini`** |
-| 他 | 同一 | 同一（category/summary は空のまま。AI 自動生成禁止） |
+| フィールド | 内容 |
+|-----------|------|
+| type | 固定値 `log` |
+| created / updated | 会話・メッセージのタイムスタンプ（DOM取得。なければ保存時刻） |
+| source | 固定値 `Gemini` |
+| tags | 固定値 `- gemini`。トピックタグは手動追記 |
+
+**廃止プロパティ（出力しない）**: `title` / `subtype` / `category` / `summary` / `status` / `conversation_id`。タイトルはファイル名と H1 見出しにのみ使う。chatgpt-live-export（`src/shared/markdown.js`）と同一仕様。
 
 ### 本文見出し（Phase1 からの差分）
 

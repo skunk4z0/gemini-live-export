@@ -42,19 +42,6 @@ function formatDateTime(ms) {
 }
 
 /**
- * @param {string} value
- * @returns {string}
- */
-function escapeYamlDoubleQuoted(value) {
-  return value
-    .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\\"')
-    .replace(/\r\n/g, "\\n")
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "\\n");
-}
-
-/**
  * @param {Conversation | null | undefined} conversation
  * @returns {string}
  */
@@ -68,14 +55,6 @@ function resolveTitle(conversation) {
     return id;
   }
   return "Untitled";
-}
-
-/**
- * @param {Conversation | null | undefined} conversation
- * @returns {string}
- */
-function resolveConversationId(conversation) {
-  return conversation?.conversation_id?.trim() || conversation?.id?.trim() || "";
 }
 
 /**
@@ -120,27 +99,22 @@ function normalizeBodyText(text) {
 }
 
 /**
+ * Frontmatter per Obsidian_Vault rules (2026-08-22/24):
+ * `type: log` + created / updated / source / tags only.
+ *
  * @param {Conversation | null | undefined} conversation
  * @param {Message[]} messages
- * @param {string} title
  * @returns {string}
  */
-function buildFrontmatter(conversation, messages, title) {
-  const conversationId = resolveConversationId(conversation);
+function buildFrontmatter(conversation, messages) {
   const { created, updated } = resolveTimestamps(conversation, messages);
 
   const lines = [
     "---",
-    `title: "${escapeYamlDoubleQuoted(title)}"`,
-    "type: ログ",
-    "subtype: AI生ログ",
-    "category: \"\"",
-    "summary: \"\"",
-    "status: 下書き",
-    "source: Gemini",
-    `conversation_id: "${escapeYamlDoubleQuoted(conversationId)}"`,
+    "type: log",
     `created: "${formatDateTime(created)}"`,
     `updated: "${formatDateTime(updated)}"`,
+    "source: Gemini",
     "tags:",
     "  - gemini",
     "---",
@@ -181,7 +155,7 @@ function generateMarkdown(conversation, messages) {
   }
 
   const title = resolveTitle(conversation);
-  const frontmatter = buildFrontmatter(conversation, messages, title);
+  const frontmatter = buildFrontmatter(conversation, messages);
   const body = buildBody(title, messages);
 
   return `${frontmatter}\n\n${body}\n`;
