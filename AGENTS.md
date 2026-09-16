@@ -91,3 +91,11 @@ feature/download                 # Step7
 ## Step 完了時の報告
 
 `tasks/_completion-report.md` に従う。
+
+---
+
+## WSL 移行メモ（2026-09-17）
+
+- 開発環境は WSL に移行済み。実体は `/home/dai/Dev/Scripts/AI/gemini-live-export`。シェルは bash、改行は LF。
+- 本プロジェクトは Chrome 拡張（JS）で、Python/Node の実行依存や Windows 絶対パス参照は無い。**実行時影響なし**。
+- 軽微: `CONTINUE.md` に PowerShell のコードブロックが残る（手順メモのみ。WSL では bash に読み替える）。
